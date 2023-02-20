@@ -14,7 +14,6 @@ server.get("/", (req, res) => {
 server.get("/users", async (req, res) => {
   const getUsers = await users.find();
   res.status(200).json(getUsers);
-  // res.status(200).json(find());
 });
 
 server.get("/users/:id", async (req, res) => {
@@ -42,8 +41,17 @@ server.post("/users", async (req, res) => {
 });
 
 server.put("/users/:id", async (req, res) => {
-  await users.update(req.params.id, { name: req.body.name, bio: req.body.bio });
-  res.status(200).json("updated");
+  const user = await users.findById(req.params.id);
+
+  if (user) {
+    await users.update(req.params.id, {
+      name: req.body.name,
+      bio: req.body.bio,
+    });
+    res.status(200).json("updated");
+  } else {
+    res.status(404).json({ message: "Belirtilen ID'li kullanıcı bulunamadı" });
+  }
 });
 
 server.delete("/users/:id", async (req, res) => {
